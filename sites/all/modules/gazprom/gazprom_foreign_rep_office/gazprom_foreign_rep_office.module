@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom Foreign Rep Office feature.
+ */
+
+include_once('gazprom_foreign_rep_office.features.inc');

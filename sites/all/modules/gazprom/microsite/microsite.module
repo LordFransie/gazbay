@@ -1,0 +1,167 @@
+<?php
+/**
+ * @file
+ * Module file for microsite.
+ */
+
+/**
+ * @defgroup microsite Example: Block
+ * @ingroup examples
+ * @{
+ * Demonstrates code creation of blocks.
+ *
+ * This is an example outlining how a module can define blocks that can be
+ * displayed on various pages of a site, or how to alter blocks provided by
+ * other modules.
+ */
+
+/**
+ * Implements hook_menu().
+ *
+ * Provides a default page to explain what this module does.
+ */
+function microsite_menu() {
+  $items['gazprom/microsite'] = array(
+    'page callback' => 'microsite_page',
+    'access callback' => TRUE,
+    'title' => 'Gazprom Microsite Test Page',
+    'theme callback' => 'microsite_rubik_theme',
+  );
+  return $items;
+}
+
+/**
+ * Simple page function to explain what the block example is about.
+ */
+function microsite_page() {
+  drupal_add_css('html,body { 
+                height:100%;
+                width:100%;
+                margin:0;
+                padding:0;
+                overflow:hidden;
+            }', 'inline');  
+  $page = array(
+    '#type' => 'markup',
+    '#markup' => microsite_page_markup(),
+  );
+  return $page;
+}
+/**
+ * Simple theme override function the the gazprom/microsite path
+ */
+function microsite_rubik_theme() {
+  return 'rubik';
+}
+function microsite_page_markup() {
+  $output = '';
+//  $output .= '<h1>';
+//  $output .= t('This is a test page for the Gazprom Flash Microsite');
+//  $output .= '</h1>';
+  
+  $output .= '<div class="stage test-page" style="width:100%; height:100%; position:relative">';
+  $block = module_invoke('microsite', 'block_view', 'main');
+  $output .= render($block); 
+  $output .= '</div>';
+
+  return $output;
+}
+
+/**
+ * Implements hook_block_info().
+ *
+ * This hook declares what blocks are provided by the module.
+ */
+function microsite_block_info() {
+  // This hook returns an array, each component of which is an array of block
+  // information. The array keys are the 'delta' values used in other block
+  // hooks.
+
+  // The required block information is a block description, which is shown
+  // to the site administrator in the list of possible blocks. You can also
+  // provide initial settings for block weight, status, etc.
+
+  // Many options are defined in hook_block_info():
+  $blocks['main'] = array(
+    // info: The name of the block.
+    'info' => t('Main embed block for the Flash Microsite'),
+    // Block caching options (per role, per user, etc.)
+    'cache' => DRUPAL_CACHE_PER_ROLE, // default
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * This hook generates the contents of the blocks themselves.
+ */
+function microsite_block_view($delta = '') {
+  //The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'main':
+      
+      _microsite_add_JS();
+    
+      
+      $block['content'] = microsite_contents($delta);
+      break;
+  }
+  return $block;
+}
+
+function microsite_preprocess_page(&$vars) {
+  $vars = $vars;
+  
+  if (true || $vars['is_front'] == true) {
+    _microsite_add_js();
+  }
+}
+
+function microsite_theme($existing, $type, $theme, $path){
+  return array(
+    'microsite_swf' => array(
+      'variables' => array('swfPath' => NULL, 'assetsPath' => NULL),
+      'template' => 'swf', // place you file in 'theme' folder of you module folder
+      'path' => drupal_get_path('module', 'microsite') .'/theme'
+    )
+  );
+}
+
+/**
+ * A module-defined block content function.
+ */
+function microsite_contents($which_block) {
+  switch ($which_block) {
+    case 'main':
+      // Modules would typically perform some database queries to fetch the
+      // content for their blocks. Here, we'll just use the variable set in the
+      // block configuration or, if none has set, a default value.
+      // Block content can be returned in two formats: renderable arrays
+      // (as here) are preferred though a simple string will work as well.
+      //return array('#markup' => variable_get('microsite_string',  t('A default value. This block was created at %time', array('%time' => date('c')))));
+      
+      $swfPath = '/' . drupal_get_path('module', 'microsite') . '/assets/swf';
+      $assetsPath = '/' . drupal_get_path('module', 'microsite') . '/assets';
+      $output = theme('microsite_swf', array('swfPath' => $swfPath, 'assetsPath' => $assetsPath));
+      return array('#markup' => $output);
+      
+  }
+}
+
+function _microsite_add_js() {
+  
+  global $language;
+  
+  // add required JS
+  Drupal_add_js('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js', 'external');
+  drupal_add_js(drupal_get_path('module', 'microsite') . '/microsite.js',
+    array('type' => 'file', 'scope' => 'header', 'preprocess' => false)
+  );
+  drupal_add_js(array('microsite' => array(
+      'pathToAssets' => '/' . drupal_get_path('module', 'microsite') . '/assets',
+      'language' => $language->language
+      )), 'setting');
+
+}

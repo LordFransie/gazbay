@@ -1,0 +1,15 @@
+name = Views: Grid Fixed Rows
+description = Provides a Views style plugin to create a grid with a specified number of rows. Columns are calculated dynamically.
+dependencies[] = views
+package = Views
+core = 7.x
+
+files[] = views_grid_fixed_rows.module
+files[] = views_grid_fixed_rows.views.inc
+; Theme
+files[] = theme/views_grid_fixed_rows.theme.inc
+; Plugins
+files[] = plugins/views_grid_fixed_rows_plugin_style.inc
+
+
+

@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
+        <script type="text/javascript">
+			function getFlashMovieObject(movieName){
+				if (window.document[movieName]){
+					return window.document[movieName];
+				}
+				if (navigator.appName.indexOf("Microsoft Internet")==-1){
+					if (document.embeds && document.embeds[movieName])
+						return document.embeds[movieName];
+				}
+				else{
+					return document.getElementById(movieName);
+				}
+			}
+
+			function initFlashPlayer(){
+				var flashMovie=getFlashMovieObject("flashPlayer");
+				flashMovie.initPlayer();
+			}
+			
+			function stopFlashPlayer(){
+				var flashMovie=getFlashMovieObject("flashPlayer");
+				flashMovie.stopPlayer();
+			}
+			
+			var Drupal = {};
+        	Drupal.gazprom = {};
+        	Drupal.gazprom.shareThis = function(service) {
+				alert('The service parameter value is: ' + service);
+			}
+			
+			var flashvars = {
+				languageNum: "0"	
+			};
+			var params = {
+				menu: "false",
+				allowfullscreen: "true"	
+			};
+			var attributes = {
+				id: "flashPlayer"
+			};
+			swfobject.embedSWF("swf/Gazprom_Player.swf", "flashContent", "1024px", "576px", "10.0.0", false, flashvars, params, attributes);
+		</script>
+        <style type="text/css">
+			html,body { 
+				height:100%;
+				width:100%;
+				margin:0;
+				padding:0;
+				overflow:hidden;
+			}
+			#header {
+				width:1024px;
+				height:135px;
+				position:absolute;
+				left:0;
+				top:0;
+			}
+			#flashContent {
+				position:absolute;
+				left:0;
+				top:0;
+			}
+		</style>
+	</head>
+	<body>
+    	<div id="header"><img src="./img/header.png" /></div>
+		<div id="flashContent"> 
+            	
+        </div>
+	</body>
+</html>

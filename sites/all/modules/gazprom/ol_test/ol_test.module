@@ -1,0 +1,21 @@
+<?php
+
+/**
+ * Implementation of hook_openlayers_behaviors().
+ *
+ * This is a ctools plugins hook.
+ */
+function ol_test_openlayers_behaviors() {
+  return array(
+    'ol_test_behavior_popup' => array(
+      'title' => t('Openlayers Behavior Test'),
+      'description' => t('Testing touch'),
+      'behavior' => array(
+        'path' => drupal_get_path('module', 'ol_test') .'/behaviors',
+        'file' => 'ol_test_behavior_popup.inc',
+        'class' => 'ol_test_behavior_popup',
+        'parent' => 'openlayers_behavior',
+      ),
+    ),
+  );
+}

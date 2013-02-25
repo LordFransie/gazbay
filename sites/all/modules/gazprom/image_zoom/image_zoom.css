@@ -1,0 +1,23 @@
+/* @override 
+	http://dev.gazprom/sites/all/modules/gazprom/image_zoom/image_zoom.css?m0j7qm
+	http://dev.gazprom/sites/all/modules/gazprom/image_zoom/image_zoom.css?m0klcw */
+
+img.image-zoom-processed {
+	cursor: pointer;
+	cursor: -moz-zoom-in;
+	cursor: -webkit-zoom-in;
+	cursor: pointer\0/; /* IE8-9 only */
+}
+
+#image-zoom-overlay {
+	width: 85%;
+	height: 85%;
+	background: no-repeat left top;
+	position: relative;
+}
+#image-zoom-overlay img {
+	width: 100%;
+	height: auto;
+}
+
+/* also see the "image zoom overlay" group within gazprom-styles.css */

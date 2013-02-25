@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom Photos feature.
+ */
+
+include_once('gazprom_photos.features.inc');

@@ -1,0 +1,6 @@
+name = "Openlayers Behavior Test"
+description = "Testing touch event of OpenLayers custom behavior"
+core = "7.x"
+package = "OpenLayers"
+version = "7.x-1.0"
+project = "ol_test"

@@ -1,0 +1,66 @@
+; Theme Info --------------------------------------------------------------
+; required information about the theme
+
+name = 965
+description = 965 is a base theme for advanced drupal theming. <strong>Disable if you are using a sub-theme</strong>.
+screenshot = images/ninesixtyfive.png
+core = 7.x
+engine = phptemplate
+
+
+; Stylesheets  ------------------------------------------------------------
+
+stylesheets[all][] = styles/boilerplate.css
+stylesheets[all][] = styles/ninesixtyfive.scss
+
+
+; Scripts  ----------------------------------------------------------------
+
+scripts[] = scripts/ninesixtyfive.js
+
+
+; Regions -----------------------------------------------------------------
+; these content regions are available for block placement.
+; some are special hidden regions: page_top, page_bottom, and help.
+
+; these are the stock regions
+regions[header] = Header
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+regions[highlighted] = Highlighted
+
+regions[featured] = Featured
+regions[content_top] = Content top
+regions[content] = Content
+regions[content_bottom] = Content bottom
+
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+
+regions[footer] = Footer
+
+
+; Theme Settings ----------------------------------------------------------
+; these are the defaults for the theme settings configuration.
+; sub-themes must re-declare default settings.
+
+settings[ninesixtyfive_feed_icons] = 0
+settings[ninesixtyfive_clear_registry] = 0
+settings[ninesixtyfive_show_grid] = 0
+settings[ninesixtyfive_sass] = 1
+settings[ninesixtyfive_devel] = 1
+settings[ninesixtyfive_breadcrumb_hideonlyfront] = 1
+settings[ninesixtyfive_breadcrumb_showtitle] = 0
+settings[ninesixtyfive_breadcrumb_separator] = '»'
+settings[ninesixtyfive_ga_enable] = 0
+settings[ninesixtyfive_ga_trackingcode] = ''
+settings[ninesixtyfive_ga_trackroles] = ''
+settings[ninesixtyfive_ga_anonimize] = 0
+
+; Information added by drupal.org packaging script on 2011-11-15
+version = "7.x-2.0-beta4"
+core = "7.x"
+project = "ninesixtyfive"
+datestamp = "1321348237"
+

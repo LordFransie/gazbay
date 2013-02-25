@@ -1,0 +1,16 @@
+; $Id: 
+
+name = Image Swapper
+description = Provides an image formatter that will swap image styles when hovered.
+dependencies[] = image
+dependencies[] = file
+
+core = 7.x
+package = Gazprom
+
+files[] = image_swapper.install
+files[] = image_swapper.module
+;files[] = includes/galleryformatter.theme.inc
+;files[] = includes/galleryformatter_imagecache.inc
+;files[] = theme/galleryformatter.tpl.php
+

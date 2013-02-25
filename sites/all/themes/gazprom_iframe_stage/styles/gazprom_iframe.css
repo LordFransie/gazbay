@@ -1,0 +1,36 @@
+/* 
+    Document   : gazprom_iframe
+    Created on : Jan 28, 2012, 6:30:29 PM
+    Author     : jonmcl
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+root { 
+  display: block;
+}
+
+body, html {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+.iframe-stage .olControlPanZoomBar div {
+  margin-top: 167px;
+  margin-left: 50px;
+  
+}
+
+.iframe-stage .olControlLayerSwitcher {
+    margin-top: 167px;
+}
+
+#console {
+  max-height:50px;
+  overflow:auto;
+}
+#console .limiter {
+  
+}

@@ -1,0 +1,56 @@
+<?php
+/**
+ * @file
+ * Dynamic Cache module.
+ *
+ * Allows other modules to disable page caching from hook_boot().
+ *
+ * Usage: Set $GLOBALS['conf']['cache'] = false in your own module's
+ * hook_boot(), as needed.
+ */
+
+/**
+ * Implements hook_boot().
+ */
+function dynamic_cache_boot() {
+  if (dynamic_cache_should_run()) {
+
+    // Overwrite cache header.
+    header('X-Drupal-Cache: MISS');
+
+    // Re-run full bootstrap and menu handler from index.php.
+    // PROBLEM: this causes hook_boot() to be invoked a 2nd time, so we use
+    // dynamic_cache_bootfix to setup ANOTHER boot hijacking to catch that.
+    drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL,true);
+    
+    // Bootstrap is finished, now run menu handler from index.php.
+    // (Currently, this code is never actually reached due to the bootfix module
+    // hijacking the above bootstrap() call, but leaving it in just in case.)
+    menu_execute_active_handler();
+
+    // We're done.
+    exit;
+  }
+}
+
+/**
+ * Helper function that tests whether or not bootstrap should be hijacked.
+ */
+function dynamic_cache_should_run() {
+  // Bootstrap called outside of normal index.php (e.g. cron.php).
+  if (strpos($_SERVER['PHP_SELF'], 'index.php') === FALSE) {
+    return FALSE;
+  }
+  // We are in a drush context.
+  if (defined('DRUSH_BOOTSTRAP_DRUPAL_FULL')) {
+    return FALSE;
+  }
+
+  // Hijack the bootstrap.
+  if (array_key_exists('cache', $GLOBALS['conf']) &&
+    $GLOBALS['conf']['cache'] == FALSE) {
+    return TRUE;
+  }
+
+  return FALSE;
+}

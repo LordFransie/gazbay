@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom Country Pages feature.
+ */
+
+include_once('gazprom_country_pages.features.inc');

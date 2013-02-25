@@ -1,0 +1,5 @@
+name = Sitemap Block
+description = Displays a sitemap in a block.
+core = 7.x
+version = "7.x-1.2"
+files[] = sitemap_block.module

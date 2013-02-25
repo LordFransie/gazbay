@@ -1,0 +1,68 @@
+<?php
+/**
+ * @file
+ * Drupal needs this blank file.
+ */
+
+/**
+ * Implements hook_block_info().
+ *
+ * This hook declares what blocks are provided by the module.
+ */
+function gazprom_blocks_block_info() {
+  $blocks['footer_social'] = array(
+    'info' => t('Gazprom: Footer Social Buttons'),
+    'cache' => DRUPAL_CACHE_PER_ROLE, // default
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * This hook generates the contents of the blocks themselves.
+ */
+function gazprom_blocks_block_view($delta = '') {
+  //The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'footer_social':
+      $block = gazprom_blocks_contents_footer_social();
+      break;
+    default:
+      $block['subject'] = '';
+      $block['content'] = '';
+      break;
+  }
+  return $block;
+}
+
+/**
+ * Footer Social Buttons
+ */
+function gazprom_blocks_contents_footer_social() {
+  global $language;
+  $lang = $language->language;
+
+  $block = array();
+  $output = array();
+
+  $block['subject'] = '';
+  $block['content'] = &$output;
+
+  $output['facebook'] = array(
+    '#markup' => <<<OUTPUT
+<iframe src="//www.facebook.com/plugins/like.php?href=https%3A%2F%2Fwww.facebook.com%2FGazpromInternational&amp;send=false&amp;layout=button_count&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=dark&amp;font&amp;height=20" scrolling="no" frameborder="0" style="border:none; overflow:hidden; min-width:80px; max-width:140px; height:20px;" allowTransparency="true"></iframe>
+OUTPUT
+  );
+
+  $output['twitter'] = array(
+    '#markup' => <<<OUTPUT
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="http://gazprom-international.com/$lang" data-size="small" data-hashtags="gazprom" data-counturl="http://gazprom-international.com/$lang">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+OUTPUT
+
+  );
+
+  return $block;
+}
+

@@ -1,0 +1,5 @@
+  ##### 965 - advanced drupal theming. #####
+
+Fixes to phamlp implemented in the 965 version :
+* Fix load_paths - http://code.google.com/p/phamlp/issues/detail?id=108
+* Fix @media queries - https://github.com/goncaloesteves/phamlp/commit/d72da7abf243de293f97e6d04640993afb4dbb5b#commitcomment-635095

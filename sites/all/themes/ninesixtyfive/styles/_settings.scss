@@ -1,0 +1,21 @@
+/**
+ *  Default values for 960gs
+ */
+
+// Grid dimentions
+$ninesixty-grid-width: 960px;
+$ninesixty-columns: 16;
+$ninesixty-gutter-width: 20px;
+
+// Header elements
+$branding: 11;
+$logo: 2;
+$logo-min: 100px; 
+
+// Sidebars widths
+$sidebar-first: 4;
+$sidebar-second: 4;
+
+// Add RTL support for 960gs
+$direction: ltr;
+

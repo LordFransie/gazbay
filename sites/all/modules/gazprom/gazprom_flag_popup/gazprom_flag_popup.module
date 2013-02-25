@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom Flag Popup feature.
+ */
+
+include_once('gazprom_flag_popup.features.inc');

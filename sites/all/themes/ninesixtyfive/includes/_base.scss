@@ -1,0 +1,40 @@
+@import "hacks";
+
+/* Contain floats: h5bp.com/q */ 
+@mixin clear {
+  &:before, &:after {
+    content: "\0020"; 
+    display: table;
+    @include has-layout;
+  }
+  &:after { clear: both; }
+  & { zoom: 1; }
+}
+
+// Add position: relative (grid-move-base) to all push/pull
+@mixin grid-push($n, $cols: $ninesixty-columns) {
+  left: ($ninesixty-grid-width / $cols) * $n;
+  @include grid-move-base;
+}
+@mixin grid-pull($n, $cols: $ninesixty-columns) {
+  left: -($ninesixty-grid-width / $cols) * $n;
+  @include grid-move-base;
+}
+
+// Fluid grid
+$fluid-gutter: $ninesixty-gutter-width / $ninesixty-grid-width * 100%;
+@mixin fluid-width($n, $cols: $ninesixty-columns, $fluid-gutter: $fluid-gutter) {
+  width: 100% / $cols * $n - $fluid-gutter;
+}
+@mixin fluid-grid($n, $cols: $ninesixty-columns, $fluid-gutter: $fluid-gutter) {
+  @include grid-unit-base($fluid-gutter);
+  @include fluid-width($n, $cols, $fluid-gutter);
+}
+@mixin fluid-push($n, $cols: $ninesixty-columns) {
+  left: (100% / $cols) * $n;
+  @include grid-move-base;
+}
+@mixin fluid-pull($n, $cols: $ninesixty-columns) {
+  left: -(100% / $cols) * $n;
+  @include grid-move-base;
+}

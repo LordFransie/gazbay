@@ -1,0 +1,7 @@
+name = Gazprom Blocks
+description = Hard coded blocks for Gazprom International site.
+core = 7.x
+package = Gazprom
+version = 7.x-1.0
+project = gazprom_blocks
+features[features_api][] = api:1

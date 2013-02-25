@@ -1,0 +1,138 @@
+@import "gradient";
+@import "960/grid";
+@import "settings";
+@import "base";
+
+// Switch to RTL flow
+@if $direction == rtl {
+  @import "960/rtl";
+}
+
+/* ==== Media Queries for Mobile-First Responsive Design. ============================
+By default we suggest 4 levels of layout :
+first - no media queries - simple, content first, no sidebars layout.
+second - small viewport - fluid, precentage based layout, only first sidebar floating.
+third - medium viewport - fluid, precentage based layout, two sidebars floating.
+forth - large viewport - fixed, pixel based layout, two sidebars floating.
+========================================================================== */
+/* 
+ * No media queries is the first query
+ */
+
+// Full width elements
+#header,
+#main-menu,
+#secondary-menu,
+#featured,
+#main,
+#highlighted,
+#sidebar-first,
+#sidebar-second,
+#footer {
+  @include fluid-grid($ninesixty-columns);
+}
+
+// Header elements
+#header {
+  #branding {
+    @include fluid-grid($branding);
+    @include alpha;
+    #logo {
+      // Fluid child method - We pass as second argument the parent's # of columns
+      // That gives us precentage width relative to parent and not main container.
+      // @see /includes/_base.scss
+      @include fluid-grid($logo, $branding);
+      min-width: $logo-min;
+      @include alpha;
+    }
+  }
+}
+  
+/* 
+ * Layout for small viewports
+ */  
+@media only screen and (min-width: 480px) {
+  
+  // Only first sidebar or Two sidebars layout
+  .one-sidebar.sidebar-first,
+  .two-sidebars {
+    #main,
+    #highlighted {
+      @include fluid-grid($ninesixty-columns - $sidebar-first);
+      @include fluid-push($sidebar-first);
+    }
+    #sidebar-first  {
+      @include fluid-grid($sidebar-first);
+      @include fluid-pull($ninesixty-columns - $sidebar-first);
+    }
+    // Second sidebar, if present, is not floating
+    #sidebar-second {
+      @include fluid-grid($ninesixty-columns);
+    }
+  }
+
+  // Only second sidebar layout
+  .one-sidebar.sidebar-second {
+    #main,
+    #highlighted {
+      @include fluid-grid($ninesixty-columns - $sidebar-second);
+    }
+    #sidebar-second  {
+      @include fluid-grid($sidebar-second);
+      @include fluid-push(0);
+    }
+  }
+}
+
+/* 
+ * Layout for medium viewports
+ */
+@media only screen and (min-width: 767px) {
+
+  // Three-column layout
+  .two-sidebars #page {
+    #main,
+    #highlighted {
+      @include fluid-grid($ninesixty-columns - $sidebar-first - $sidebar-second);
+    }
+    #sidebar-first {
+      @include fluid-pull($ninesixty-columns - $sidebar-first - $sidebar-second);
+    }
+    #sidebar-second {
+      @include fluid-grid($sidebar-second);
+      @include fluid-push(0);
+    }
+  }
+}
+
+/* 
+ * Layout for large viewports
+ */
+@media only screen and (min-width: 960px) {
+  // Fixed width
+#page {
+  @include grid-container;
+}
+}
+
+/* ==== Clear floats. ======================================
+@mixin in _base.scss
+inspired by h5bp.com/q
+======================================================= */
+#page,
+#header,
+#branding,
+#featured,
+#footer {
+  @include clear;
+}
+
+/* ==== Grid Background. ======================================
+Use CSS3 gradients to creat flexible background grid "image"
+======================================================= */
+$space : $ninesixty-gutter-width / 2;
+$column: $ninesixty-grid-width / $ninesixty-columns - $space;
+body.show-grid #page {
+  @include linear-gradient(color-stops(#e6ffa8 $space, #ccea7e $space, #ccea7e $column, #e6ffa8 $column), left);
+  background-size: $ninesixty-grid-width / $ninesixty-columns;
+}

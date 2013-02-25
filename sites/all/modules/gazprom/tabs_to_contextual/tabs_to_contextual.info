@@ -1,0 +1,4 @@
+name = Tabs to Contextual Menus
+description = "Changes system tabs, for node editing, to contextual menus."
+package = "Gazprom"
+core = 7.x

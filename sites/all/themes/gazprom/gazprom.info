@@ -1,0 +1,71 @@
+name = Gazprom International Theme
+description = For the Gazprom Internation Drupal site. Fall 2011.
+core = 7.x
+version = 1.0
+engine = phptemplate
+screenshot = screenshot.png
+base theme = ninesixtyfive
+
+
+; Stylesheets  ------------------------------------------------------------
+
+stylesheets[all][] = styles/text.css
+stylesheets[all][] = styles/grid/fluid16.css
+stylesheets[all][] = styles/gazprom-styles.css
+
+; Scripts  ----------------------------------------------------------------
+
+scripts[] = scripts/modernizr.custom.78671.js
+scripts[] = scripts/history/compressed/json2.js
+scripts[] = scripts/history/compressed/history.js
+;scripts[] = scripts/history/uncompressed/history.js
+; @TODO History.js library module when we sort out the problem with overlay? until then, the history.js code above is hacked
+; .. to ignore state data (line 1621) ... @TODO @TODO .. whats was going on here? We were no longer using uncompressed one as of 2/9/12, and all seemed good?
+; .. switching back to hacked version to save me some grief for launch
+scripts[] = scripts/history/compressed/history.html4.js
+scripts[] = scripts/history/compressed/history.adapter.jquery.js
+scripts[] = scripts/jquery.scrollTo-min.js
+scripts[] = scripts/jquery.tools.overlay.min.js
+scripts[] = scripts/jquery.tools.expose.min.js
+scripts[] = scripts/jquery.tools.tooltip.min.js
+;scripts[] = scripts/jquery.lazyload.js
+scripts[] = scripts/plugins.js
+;scripts[] = scripts/hijax.js
+scripts[] = scripts/hijax.min.js
+;scripts[] = scripts/script.js
+scripts[] = scripts/script.min.js
+
+; Regions -----------------------------------------------------------------
+; these content regions are available for block placement.
+; some are special hidden regions: page_top, page_bottom, and help.
+
+regions[header-left] = Header left Section
+regions[header-middle] = Header Middle Section
+regions[header-right] = Header Right Section
+regions[help] = Help
+regions[page_top] = Page top
+regions[page_bottom] = Page bottom
+regions[highlighted] = Highlighted
+
+;regions[featured] = Featured
+regions[main_navigation] = First Level Navigation
+regions[second_navigation] = Second Level Navigation
+regions[third_navigation] = Third Level Navigation
+regions[content_top] = Content top
+regions[content] = Content
+regions[content_bottom] = Content bottom
+regions[content_sidebar_first] = Content sidebar first
+regions[content_sidebar_second] = Content sidebar second
+
+regions[overlay_sidebar_first] = Overlay content sidebar first
+regions[overlay_sidebar_second] = Overlay sidebar second
+
+regions[sidebar_first] = Sidebar first
+regions[sidebar_second] = Sidebar second
+
+regions[development_blocks] = Development Blocks
+
+;regions[footer] = Footer
+regions[footer_left] = Footer left
+regions[footer_middle] = Footer middle
+regions[footer_right] = Footer right

@@ -1,0 +1,106 @@
+/* 
+    Document   : gazprom_openlayers_behavior_tooltip
+    Created on : Jan 29, 2012, 10:56:54 PM
+    Author     : jonmcl
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+#gazprom-tooltip.olPopup {
+}
+#gazprom-tooltip .olPopupContent {
+	overflow: hidden;
+	padding: 0;
+}
+
+.olPopup-container {
+	font-size: 11px;
+	line-height: 1.1;
+  	overflow: hidden;
+padding-left: 41px;
+padding-top: 21px;
+min-height: 117px;
+position: relative;
+background-color: transparent;
+zoom: 1;
+/*padding-bottom: 21px;*/
+}
+
+.openlayers-tooltip-graphic {
+	position: absolute;
+	z-index: 2;
+	width: 81px;
+	height: 138px;
+/*	top: -21px;
+	left: -40px;*/
+	top: 0;
+	left: 0;
+	background: url(../openlayers_themes/gazprom_1/markers/FlameIcon_Large_Lit.png) transparent;
+/*    filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(enabled=true, sizingMethod=scale, src='../openlayers_themes/gazprom_1/markers/FlameIcon_Large_Lit.png');
+	zoom: 1;*/
+}
+.openlayers-tooltip-primary-image,
+.openlayers-tooltip-description .views-field-field-image {
+	float: left;
+	margin-top: 3px;
+	padding-bottom: 10px;
+	padding-right: 10px;
+}
+
+.openlayers-tooltip .content {
+    background-color: #333;
+	background-color: rgba(0,0,0,.5);
+	font-size: 13px;
+	line-height: 1.2;
+	color: #fff;
+	min-height: 100px;
+	position: relative;
+	z-index: 1;
+	zoom: 1;
+/*	min-width: 200px;
+	max-width: 350px;*/
+}
+
+.openlayers-tooltip-description {
+	padding: 10px 0;
+	width: 250px;
+}
+.openlayers-tooltip-description.contains-image {
+	width: 350px;
+}
+.openlayers-tooltip-description .views-field-title a {
+	font-size: 16px;
+	font-weight: bold;
+	color: #FFA200;
+	line-height: 1.2;
+	margin-bottom:5px;
+	text-decoration: none;
+	display: block;
+}
+.openlayers-tooltip-description > div {
+	padding-left: 40px;
+	padding-right: 10px;
+}
+/*.openlayers-tooltip-name a:hover,
+{
+	text-decoration: underline;
+}*/
+
+.openlayers-tooltip-description.contains-image .views-field-field-country-blurb {
+	margin-left: 95px;
+}
+
+.openlayers-tooltip-description img {
+	width: 85px;
+/*	display: none;*/
+}
+/*.openlayers-tooltip-description .views-field-name a:hover {
+	text-decoration: underline;
+}*/
+.openlayers-tooltip-description .views-field-title a:hover {
+	text-decoration: underline;
+}
+
+.clearfix:after {
+	clear: both;
+}

@@ -1,0 +1,11 @@
+name = Gazprom Mobile
+package = Gazprom
+description = Mobile detection custom function and cache disabling (via Dynamic Cache module).
+core = 7.x
+dependencies[] = dynamic_cache
+dependencies[] = browscap
+dependencies[] = mobile_theme
+
+version = "7.x-1.x-dev"
+core = "7.x"
+

@@ -1,0 +1,17 @@
+name = Gazprom Mobile
+description = Gazprom International Mobile theme.
+package = Mobile
+version = 7.x-1.x
+core = 7.x
+base theme = mobile_jquery
+
+scripts[] = 'scripts/script.js'
+stylesheets[all][] = 'styles/style.css'
+
+regions[header] = 'Header'
+regions[highlighted] = 'Highlighted'
+regions[content] = 'Content'
+regions[sidebar_first] = 'Primary'
+regions[sidebar_second] = 'Secondary'
+regions[footer] = 'Footer'
+

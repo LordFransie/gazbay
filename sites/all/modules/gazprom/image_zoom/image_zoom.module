@@ -1,0 +1,286 @@
+<?php
+
+/**
+ * Implementation of hook_field_formatter_info().
+ */
+function image_zoom_field_formatter_info() {
+  return array(
+    'image_zoom_default' => array(
+      'label' => t('Image Zoom'),
+      'field types' => array('image'),
+      'settings' => array('image_style' => ''),
+      'description' => t('Provide a image that can be viewed at full size in an overlay.'),
+    ),
+  );
+}
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function image_zoom_field_formatter_settings_form($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $image_styles = image_style_options(FALSE);
+  $element['image_style'] = array(
+    '#title' => t('Image style'),
+    '#type' => 'select',
+    '#default_value' => $settings['image_style'],
+    '#empty_option' => t('None (original image)'),
+    '#options' => $image_styles,
+  );
+
+  return $element;
+
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function image_zoom_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $summary = array();
+
+  $image_styles = image_style_options(FALSE);
+  // Unset possible 'No defined styles' option.
+  unset($image_styles['']);
+  // Styles could be lost because of enabled/disabled modules that defines
+  // their styles in code.
+  if (isset($image_styles[$settings['image_style']])) {
+    $summary[] = t('Image style: @style', array('@style' => $image_styles[$settings['image_style']]));
+  }
+  else {
+    $summary[] = t('Original image');
+  }
+
+  return implode('<br />', $summary);
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function image_zoom_theme() {
+  return array(
+    'image_zoom_style' => array(
+      'variables' => array(
+        'style_name' => NULL,
+        'path' => NULL,
+        'width' => NULL,
+        'height' => NULL,
+        'alt' => '',
+        'title' => NULL,
+        'attributes' => array(),
+      ),
+    ),
+    'image_zoom' => array (
+        'variables' => array (
+          'path' => NULL,
+          'width' => NULL,
+          'height' => NULL,
+          'alt' => '',
+          'title' => NULL,
+          'attributes' => array(),
+        ),
+    ),
+    'image_zoom_formatter' => array(
+      'variables' => array('item' => NULL, 'path' => NULL, 'image_style' => NULL),
+    ),
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function image_zoom_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  $element = array();
+
+  // Check if the formatter involves a link.
+//  if ($display['settings']['image_link'] == 'content') {
+//    $uri = entity_uri($entity_type, $entity);
+//  }
+//  elseif ($display['settings']['image_link'] == 'file') {
+//    $link_file = TRUE;
+//  }
+
+  foreach ($items as $delta => $item) {
+    if (isset($link_file)) {
+      $uri = array(
+        'path' => file_create_url($item['uri']),
+        'options' => array(),
+      );
+    }
+    $element[$delta] = array(
+      '#theme' => 'image_zoom_formatter',
+      '#item' => $item,
+      '#image_style' => $display['settings']['image_style'],
+      '#path' => isset($uri) ? $uri : '',
+    );
+  }
+
+  if(count($items) > 0){
+   drupal_add_js(drupal_get_path('module', 'image_zoom') . '/image_zoom.js');
+   drupal_add_css(drupal_get_path('module', 'image_zoom')  . '/image_zoom.css');
+  }
+  
+  return $element;
+
+}
+
+
+/**
+ * Returns HTML for an image field formatter.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - item: An array of image data.
+ *   - image_style: An optional image style.
+ *   - path: An array containing the link 'path' and link 'options'.
+ *
+ * @ingroup themeable
+ */
+/** themed in this module so that we can add the 'class' attribute.
+ * Otherwise, this is a direct copy from theme_image_formatter()
+ * in image.field.inc.
+ */
+function theme_image_zoom_formatter($variables) {
+  $item = $variables['item'];
+  $image = array(
+    'path' => $item['uri'],
+    'alt' => $item['alt'],
+  );
+
+  if (isset($item['width']) && isset($item['height'])) {
+    $image['width'] = $item['width'];
+    $image['height'] = $item['height'];
+  }
+
+  // Do not output an empty 'title' attribute.
+  if (drupal_strlen($item['title']) > 0) {
+    $image['title'] = $item['title'];
+  }
+
+  if ($variables['image_style']) {
+    $image['style_name'] = $variables['image_style'];
+    $output = theme('image_zoom_style', $image);
+  }
+  else {
+    $output = theme('image_zoom', $image); // Note: this doesn't really provide a zoom function without an image_style.
+  }
+
+  if (!empty($variables['path']['path'])) {
+    $path = $variables['path']['path'];
+    $options = $variables['path']['options'];
+    // When displaying an image inside a link, the html option must be TRUE.
+    $options['html'] = TRUE;
+    $output = l($output, $path, $options);
+  }
+
+  return $output;
+}
+
+/**
+ * Returns HTML for an image using a specific image style.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - style_name: The name of the style to be used to alter the original image.
+ *   - path: The path of the image file relative to the Drupal files directory.
+ *     This function does not work with images outside the files directory nor
+ *     with remotely hosted images.
+ *   - width: The width of the source image (if known).
+ *   - height: The height of the source image (if known).
+ *   - alt: The alternative text for text-based browsers.
+ *   - title: The title text is displayed when the image is hovered in some
+ *     popular browsers.
+ *   - attributes: Associative array of attributes to be placed in the img tag.
+ *
+ * @ingroup themeable
+ */
+function theme_image_zoom_style($variables) {
+  // Determine the dimensions of the styled image.
+  $dimensions = array(
+    'width' => $variables['width'],
+    'height' => $variables['height'],
+  );
+
+  // Determine the url for the full size image.
+  $variables['attributes']['zoom-path'] = file_create_url($variables['path']);
+
+  // Record original dimensions
+  $variables['attributes']['zoom-width'] = $variables['width'];
+  $variables['attributes']['zoom-height'] = $variables['height'];
+  
+  image_style_transform_dimensions($variables['style_name'], $dimensions);
+
+  $variables['width'] = $dimensions['width'];
+  $variables['height'] = $dimensions['height'];
+
+  // Determine the url for the styled image.
+  $variables['path'] = image_style_url($variables['style_name'], $variables['path']);
+  
+  return theme('image_zoom', $variables);
+}
+
+/**
+ * Returns HTML for an image.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - path: Either the path of the image file (relative to base_path()) or a
+ *     full URL.
+ *   - width: The width of the image (if known).
+ *   - height: The height of the image (if known).
+ *   - alt: The alternative text for text-based browsers. HTML 4 and XHTML 1.0
+ *     always require an alt attribute. The HTML 5 draft allows the alt
+ *     attribute to be omitted in some cases. Therefore, this variable defaults
+ *     to an empty string, but can be set to NULL for the attribute to be
+ *     omitted. Usually, neither omission nor an empty string satisfies
+ *     accessibility requirements, so it is strongly encouraged for code calling
+ *     theme('image') to pass a meaningful value for this variable.
+ *     - http://www.w3.org/TR/REC-html40/struct/objects.html#h-13.8
+ *     - http://www.w3.org/TR/xhtml1/dtds.html
+ *     - http://dev.w3.org/html5/spec/Overview.html#alt
+ *   - title: The title text is displayed when the image is hovered in some
+ *     popular browsers.
+ *   - attributes: Associative array of attributes to be placed in the img tag.
+ */
+function theme_image_zoom($variables) {
+  $attributes = $variables['attributes'];
+  $attributes['src'] = file_create_url($variables['path']);
+
+  foreach (array('width', 'height', 'alt', 'title', 'zoom-path', 'zoom-width', 'zoom-height') as $key) {
+
+    if (isset($variables[$key])) {
+      $attributes[$key] = $variables[$key];
+    }
+  }
+
+  return '<img' . drupal_attributes($attributes) . ' />';
+}
+
+/**
+ * Helper function to get dimensions of an image
+ *
+ * Based off function in galleryformatter module
+ * 
+ * @return array
+ * An array key => value pairs
+ * width => value and height => value, not including px
+ */
+function image_zoom_getimage_dimensions($stylename, $image_path) {
+  // generate the image style image path
+  $transformed_path =  image_style_path($stylename, $image_path);
+  // grab the style itself
+  $style = image_style_load($stylename);
+
+  // check if file exists, or create it so we can get the image dimensions
+  if (file_exists($transformed_path) || image_style_create_derivative($style, $image_path, $transformed_path)) {
+    // grab the image information
+    $image = image_get_info($transformed_path);
+    $ret['height'] = $image['height'];
+    $ret['width'] = $image['width'];
+  }
+  return $ret;
+}
+

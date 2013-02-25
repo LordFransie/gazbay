@@ -1,0 +1,24 @@
+@mixin grid-unit-base($gutter-width: $ninesixty-gutter-width)
+  display: inline
+  float: right
+  margin:
+    left: $gutter-width / 2
+    right: $gutter-width / 2
+
+@mixin grid-prefix($n, $cols: $ninesixty-columns)
+  padding-right: $ninesixty-grid-width / $cols * $n
+  padding-left: 0
+
+@mixin grid-push($n, $cols: $ninesixty-columns)
+  right: ($ninesixty-grid-width / $cols) * $n
+  left: auto
+  +grid-move-base
+
+@mixin grid-pull($n, $cols: $ninesixty-columns)
+  right: -($ninesixty-grid-width / $cols) * $n
+  left: auto
+  +grid-move-base
+
+@mixin grid-suffix($n, $cols: $ninesixty-columns)
+  padding-left: $ninesixty-grid-width / $cols * $n
+  padding-right: 0

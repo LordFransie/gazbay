@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * Use special boot processes provided by dynamic_cache module to disable
+ * the cache for mobile devices.
+ */
+function gazprom_mobile_boot(){
+  if(gazprom_mobile_detect()) {
+    $GLOBALS['conf']['cache'] = 0;
+    drupal_page_is_cacheable(FALSE);
+  }
+}
+
+
+/**
+ * Defines methods available to detect mobile devices.
+ *
+ * @return
+ *   An associative array whose key is the name of the function, and whose
+ *   value is the human-readable name of the function. This function is
+ *   called when needed to detect whether on a mobile browser. It should
+ *   return TRUE if the user is on a mobile device.
+ */
+function gazprom_mobile_mobile_theme_detection() {
+  return array(
+    'gazprom_mobile_detect' => 'Gazprom Mobile Detection',
+  );
+}
+
+
+/**
+ * Gazprom custom detection method.
+ * Uses browscap for mobile detection, but ignores iPads.
+ */
+function gazprom_mobile_detect() {
+  $browscap = browscap_get_browser();
+  $mobile = $browscap['ismobiledevice'] === true || $browscap['ismobiledevice'] == 'TRUE' || $browscap['ismobiledevice'] == 'true' || $browscap['ismobiledevice'] == 1 ? TRUE : FALSE;
+  $mobile = $mobile && (strstr($browscap['useragent'], 'iPad') === FALSE);
+  return $mobile;
+}

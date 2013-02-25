@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom Management feature.
+ */
+
+include_once('gazprom_management.features.inc');

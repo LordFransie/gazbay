@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom Locations feature.
+ */
+
+include_once('gazprom_locations.features.inc');

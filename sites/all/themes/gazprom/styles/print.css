@@ -1,0 +1,14 @@
+
+div {
+	display: block;
+}
+img {
+	display: block;
+	float: left;
+	margin-right: 20px;
+	margin-bottom: 5px;
+}
+
+h6.url-reference {
+	font-size: 9px;
+}

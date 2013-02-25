@@ -1,0 +1,12 @@
+name = Gazprom Search
+description = Search Results View, hook_form_alter, functions for View
+core = 7.x
+package = Gazprom
+php = 5.2.4
+version = 7.x-1.3-1
+project = gazprom_search
+dependencies[] = ctools
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:1
+features[views_view][] = search_results

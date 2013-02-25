@@ -1,0 +1,7 @@
+<?php
+
+function gazprom_admin_node_insert($node) {
+  /* redirect back to node edit form */
+  //$_GET['destination'] = 'node/' . $node->nid . '/edit';
+  // @TODO something intelligent needs to be done here
+}

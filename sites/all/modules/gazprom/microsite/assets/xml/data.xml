@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<data>
+  <!--ENGLISH VIDEOS-->
+  <Playlist>
+    <video src="../video/INTRO.flv"  estimatedBytes="4800000" bufferTime="18" estimatedDuration="18" />
+    <video src="../video/english_01.flv"  estimatedBytes="9100000" bufferTime="35" estimatedDuration="35" />
+    <video src="../video/english_02.flv" estimatedBytes="13100000" bufferTime="49" estimatedDuration="49" />
+    <video src="../video/english_03.flv" estimatedBytes="21100000" bufferTime="81" estimatedDuration="81" />
+    <video src="../video/english_045.flv" estimatedBytes="16200000" bufferTime="63" estimatedDuration="63" />
+  </Playlist>
+  <!--RUSSIAN VIDEOS-->
+  <Playlist>
+    <video src="../video/INTRO.flv"  estimatedBytes="4800000" bufferTime="18" estimatedDuration="18" />
+    <video src="../video/russian_01.flv"  estimatedBytes="9100000" bufferTime="35" estimatedDuration="35" />
+    <video src="../video/russian_02.flv" estimatedBytes="13100000" bufferTime="49" estimatedDuration="49" />
+    <video src="../video/russian_03.flv" estimatedBytes="21100000" bufferTime="81" estimatedDuration="81" />
+    <video src="../video/russian_045.flv" estimatedBytes="16200000" bufferTime="63" estimatedDuration="63" />
+  </Playlist>
+  <!--SPANISH VIDEOS-->
+  <Playlist>
+    <video src="../video/INTRO.flv"  estimatedBytes="4800000" bufferTime="18" estimatedDuration="18" />
+    <video src="../video/spanish_01.flv"  estimatedBytes="9100000" bufferTime="35" estimatedDuration="35" />
+    <video src="../video/spanish_02.flv" estimatedBytes="13100000" bufferTime="49" estimatedDuration="49" />
+    <video src="../video/spanish_03.flv" estimatedBytes="21100000" bufferTime="81" estimatedDuration="81" />
+    <video src="../video/spanish_045.flv" estimatedBytes="16200000" bufferTime="63" estimatedDuration="63" />
+  </Playlist>
+  <LoaderMax name="xmlLoader" prependURLs="./xml/" load="true">
+    <XMLLoader url="captions.xml" name="captions" estimatedBytes="4000" />
+  </LoaderMax>
+  <LoaderMax name="imageLoader" prependURLs="./img/" load="true">
+    <ImageLoader url="Satelite_01.jpg" name="img1" estimatedBytes="86000" />
+  </LoaderMax>
+  <LoaderMax name="swfLoader" prependURLs="./swf/" load="true">
+    <SWFLoader url="Preloader.swf" name="preloader" estimatedBytes="16000" />
+    <SWFLoader url="Icon-1.swf" name="icon1" estimatedBytes="4000" />
+    <SWFLoader url="Icon-2.swf" name="icon2" estimatedBytes="8000" />
+    <SWFLoader url="Icon-3.swf" name="icon3" estimatedBytes="4000" />
+    <SWFLoader url="Icon-4.swf" name="icon4" estimatedBytes="8000" />
+  </LoaderMax>
+</data>

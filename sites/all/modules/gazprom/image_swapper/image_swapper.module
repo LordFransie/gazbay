@@ -1,0 +1,242 @@
+<?php
+  //include_once DRUPAL_ROOT .'/'. drupal_get_path('module', 'galleryformatter') .'/includes/image_swapper_imagestyles.inc';
+
+
+/**
+ * Implementation of hook_field_formatter_info().
+ */
+function image_swapper_field_formatter_info() {
+  return array(
+    'image_swapper_default' => array(
+      'label' => t('Image Swapper'),
+      'field types' => array('image'),
+      'settings' => array(
+        'base_style' => 'image_swapper_base',
+        'hover_style' => 'image_swapper_hover',
+        'effect' => 'fade'
+      ),
+      'description' => t('Provide a hoverable image that changes styles based on hover state.'),
+    ),
+  );
+}
+/**
+ * Implements hook_field_formatter_settings_form().
+ */
+function image_swapper_field_formatter_settings_form($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $form = array();
+  $options = array(t('None'),);
+  // get a list of all style names for our form options
+  foreach (image_styles() as $id => $style) {
+    $options[$id] = $id;
+  }
+  $form['base_style'] = array(
+    '#type' => 'select',
+    '#title' => t('Select the default style'),
+    '#options' => $options,
+    '#default_value' => $settings['base_style'],
+    '#description' => t('Select the image style you would like to show by default.'),
+  );
+  $form['hover_style'] = array(
+    '#type' => 'select',
+    '#title' => t('Select the hover style'),
+    '#options' => $options,
+    '#default_value' => $settings['hover_style'],
+    '#description' => t('Select the image style you would like to show when hovering.'),
+  );
+  $style_options = array('fade' => t('Simple fade effect'));
+//  $styles = module_invoke_all('image_swapper_styles');
+//  // The keys used for options must be valid html id-s.
+//  foreach ($styles as $style) {
+//    $style_options[$style] = $style;
+//  }
+//  ksort($style_options);
+  $form['effect'] = array(
+    '#type' => 'select',
+    '#title' => t('Style'),
+    '#options' => array('noeffect' => t('No effect')) + $style_options,
+    '#default_value' => $settings['effect'],
+    '#description' => t('Choose swap effect.'),
+  );
+  return $form;
+}
+
+/**
+ * Implements hook_field_formatter_settings_summary().
+ */
+function image_swapper_field_formatter_settings_summary($field, $instance, $view_mode) {
+  $display = $instance['display'][$view_mode];
+  $settings = $display['settings'];
+
+  $summary[] = t('Default style: @value', array('@value' => $settings['base_style']));
+  $summary[] = t('Hover style: @value', array('@value' => $settings['hover_style']));
+  $summary[] = t('Effect: @value', array('@value' => $settings['effect']));
+
+
+  return implode ('<br />', $summary);
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function image_swapper_theme() {
+  return array(
+    'image_swapper' => array(
+      'variables' => array('base' => NULL, 'hover' => NULL, 'effect' => NULL),
+      'template' => 'theme/image_swapper'
+    ),
+    'image_swapper_formatter' => array(
+      'variables' => array('item' => NULL, 'path' => NULL, 'image_style' => NULL),
+    ),
+      // @TODO why isn't image_swapper_image_formatter being called? why is 'image_swapper' working? figure out what is going on here
+      // .. so that we can use our custom image_swapper_image_formatter() function to be able to add the class attribute
+  );
+}
+
+/**
+ * Implements hook_field_formatter_view().
+ */
+function image_swapper_field_formatter_view($entity_type, $entity, $field, $instance, $langcode, $items, $display) {
+  // if there are no images, dont do anything else
+  if(empty($items)){
+    return;
+  }
+  $modulepath = drupal_get_path('module', 'image_swapper');
+  $element = array();
+  $settings = $display['settings'];
+  $settings['effect'] = strtolower($settings['effect']);
+  $num_of_images = count($items);
+  
+  $dimensions = array();
+
+  // prepare the renderable array
+  $renderitems = array();
+  $renderitems['hover'] = array();
+  foreach ($items as $delta => $item){
+    /*
+     *  fetch the base
+     */
+    $renderitems['base'][$delta]['image'] = theme('image_formatter', array(
+        'item' => $item,
+        'image_style' => $settings['base_style'],
+        'attributes' => array('class' => 'image-swapper-base'),
+        // @TODO the adding of the class attribute is currently dependent on the custom gazprom_image_formatter function in our gazprom theme template.php file
+        // .. probably not a huge deal. not going to use the class in the JS .. consider removing completely? or should this module have a image_swapper_image_formatter function?
+      )
+    );
+    $renderitems['base'][$delta]['dimensions'] = image_swapper_getimage_dimensions($settings['base_style'], $item['uri']);
+    
+    /*
+     * fetch the hover
+     */
+    $renderitems['hover'][$delta]['image'] = theme('image_formatter', array(
+        'item' => $item,
+        'image_style' => $settings['hover_style'],
+        'attributes' => array('class' => 'image-swapper-hover'),
+      )
+    );
+    $renderitems['hover'][$delta]['dimensions'] = image_swapper_getimage_dimensions($settings['hover_style'], $item['uri']);
+
+
+  }
+
+  if($num_of_images > 0){
+   drupal_add_js(drupal_get_path('module', 'image_swapper') . '/image_swapper.js');
+   //drupal_add_css(drupal_get_path('module', 'image_swapper') . '/image_swapper.css');
+  }
+
+  // prepare the variables for our theme function
+  $element = array(
+      '#theme' => 'image_swapper',
+      '#base' => $renderitems['base'],
+      '#hover' => $renderitems['hover'],
+      '#settings' => $settings,
+    );
+  return $element;
+  
+  // @TODO add option, like regular image formatter, to link to content/nothing ??
+}
+
+
+/**
+ * Returns HTML for an image field formatter.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - item: An array of image data.
+ *   - image_style: An optional image style.
+ *   - path: An array containing the link 'path' and link 'options'.
+ *
+ * @ingroup themeable
+ */
+/** themed in this module so that we can add the 'class' attribute.
+ * Otherwise, this is a direct copy from theme_image_formatter()
+ * in image.field.inc.
+ */
+function image_swapper_formatter($variables) {
+  $item = $variables['item'];
+  $image = array(
+    'path' => $item['uri'],
+    'alt' => $item['alt'],
+  );
+
+  if (isset($item['width']) && isset($item['height'])) {
+    $image['width'] = $item['width'];
+    $image['height'] = $item['height'];
+  }
+
+  // Do not output an empty 'title' attribute.
+  if (drupal_strlen($item['title']) > 0) {
+    $image['title'] = $item['title'];
+  }
+
+  // add attributes (class)
+  if (isset($item['attributes'])) {
+    $image['attributes'] = $item['attributes'];
+  }
+  
+  if ($variables['image_style']) {
+    $image['style_name'] = $variables['image_style'];
+    $output = theme('image_style', $image);
+  }
+  else {
+    $output = theme('image', $image);
+  }
+
+  if (!empty($variables['path']['path'])) {
+    $path = $variables['path']['path'];
+    $options = $variables['path']['options'];
+    // When displaying an image inside a link, the html option must be TRUE.
+    $options['html'] = TRUE;
+    $output = l($output, $path, $options);
+  }
+
+  return $output;
+}
+
+/**
+ * Helper function to get dimensions of an image
+ *
+ * Based off function in galleryformatter module
+ * 
+ * @return array
+ * An array key => value pairs
+ * width => value and height => value, not including px
+ */
+function image_swapper_getimage_dimensions($stylename, $image_path) {
+  // generate the image style image path
+  $transformed_path =  image_style_path($stylename, $image_path);
+  // grab the style itself
+  $style = image_style_load($stylename);
+
+  // check if file exists, or create it so we can get the image dimensions
+  if (file_exists($transformed_path) || image_style_create_derivative($style, $image_path, $transformed_path)) {
+    // grab the image information
+    $image = image_get_info($transformed_path);
+    $ret['height'] = $image['height'];
+    $ret['width'] = $image['width'];
+  }
+  return $ret;
+}

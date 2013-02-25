@@ -1,0 +1,130 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom Search feature.
+ */
+
+include_once('gazprom_search.features.inc');
+
+function gazprom_search_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'search_block_form') {
+    // Drupal 7 Search Form Block
+      $form[$form_id]['#title_display'] = 'before';
+      $form[$form_id]['#size'] = 1;
+      $form['actions']['submit']['#value'] = t('GO'); // Change the text on the submit button
+      //$form['#method'] = 'get';
+      //$form['#action'] = '/search/node';
+
+      // good source of advice: http://drupal.org/node/154137
+  }
+  if ($form['#id'] == 'views-exposed-form-search-results-page'){
+    // Custom View Exposed Form Block ( i do not like the Views form object!!!)
+    // @TODO should this go in a Features module along with the ctools version of the View
+    $form = $form;
+    $form['keywords']['#title'] = $form['#info']['filter-keys']['label']; // Search
+    $form['#info']['filter-keys']['label'] = '';
+    $form['keywords']['#title_display'] = 'before';
+    $form['keywords']['#size'] = 1;
+    $form['#attributes']['class'][] = 'simple-search-form';
+  }
+   
+  
+}
+
+
+/**
+ * Function below are used by the search_results View
+ */
+function gazprom_search_results_view_group_title($type) {
+  /**
+   * Hacked in function to be used by the search_results View
+   * For changing type codes into something good 
+   */
+  
+
+  switch ($type) {
+    case 'page':
+    case 'code_page':
+    case 'webform':
+    case 'country_page':
+      $output = 'Pages';
+      break;
+
+    case 'media_corporate_news':
+      $output = 'Corporate News';
+      break;
+
+    case 'media_article':
+      $output = 'Articles';
+      break;
+
+    case 'media_videos':
+      $output = 'Videos';
+      break;
+    
+    case 'media_photo':
+      $output = 'Photos';
+      break;
+
+    default:
+      $output = 'Other';
+  }
+
+  $output = t($output, array('context'=>'Search Results View'));
+
+  return $output;
+
+}
+
+function gazprom_search_results_view_type_sorter($row1, $row2) {
+    /**
+   * Hacked in function to be used by the search_results View
+   * To control sorting order of the type groupings 
+   */
+  if (gazprom_search_results_view_type_sorter_sequence($row2->type) < gazprom_search_results_view_type_sorter_sequence($row1->type)) {
+    return 1;
+  }
+  if (gazprom_search_results_view_type_sorter_sequence($row2->type) > gazprom_search_results_view_type_sorter_sequence($row1->type)) {
+    return -1;
+  }
+  
+  return 0;
+    
+}
+
+function gazprom_search_results_view_type_sorter_sequence($type) {
+  /**
+   * Returns an integer for each known type so that the
+   * gazprom_search_results_view_type_sorter can compare 2 rows
+   */
+
+  switch ($type) {
+    case 'page':
+    case 'code_page':
+    case 'webform':
+    case 'country_page':
+      $seq = 1;
+      break;
+    
+    case 'media_videos':
+      $seq = 10;
+      break;
+    
+    case 'media_article':
+      $seq = 20;
+      break;
+    
+    case 'media_corporate_news':
+      $seq = 30;
+      break;
+    
+    case 'media_photos':
+      $seq = 40;
+      break;
+    
+    default:
+      $seq = 999;
+  }
+  
+  return $seq;
+}

@@ -1,0 +1,214 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom World Map feature.
+ */
+
+include_once('gazprom_world_map.features.inc');
+
+/**
+ * Implements hook_menu().
+ *
+ * Provides a default page to explain what this module does.
+ */
+function gazprom_world_map_menu() {
+  $items['gazprom/world-map/test'] = array(
+    'page callback' => 'gazprom_world_map_test',
+    'access callback' => TRUE,
+    'title' => 'Gazprom gazprom_world_map Test Page',
+    'theme callback' => 'gazprom_world_map_test_theme',
+  );
+  $items['gazprom/world-map/iframe'] = array(
+    'page callback' => 'gazprom_world_map_iframe',
+    'access callback' => TRUE,
+    'title' => 'Gazprom Interactive Map',
+    'theme callback' => 'gazprom_world_map_iframe_theme',
+  );
+  return $items;
+}
+
+/**
+ * Simple page function to explain what the block example is about.
+ */
+function gazprom_world_map_test() {
+  $page = array(
+    '#type' => 'markup',
+    '#markup' => gazprom_world_map_test_markup(),
+  );
+  return $page;
+}
+
+/**
+ * Page function to return iFrame version of map
+ */
+function gazprom_world_map_iframe() {
+  $page = array(
+    '#type' => 'markup',
+    '#markup' => gazprom_world_map_iframe_markup(),
+  );
+  return $page;
+}
+
+function gazprom_world_map_test_markup() {
+  $output = '';
+  $output .= '<h1>';
+  $output .= t('This is a test page for the Gazprom World Map');
+  $output .= '</h1>';
+  
+  $output .= '<div class="stage test-page">';
+  $block = module_invoke('gazprom_world_map', 'block_view', 'main');
+  $output .= render($block); 
+  $output .= '</div>';
+
+  return $output;
+}
+
+function gazprom_world_map_iframe_markup() {
+  
+  $output = '';
+  $output .= '<div class="iframe-stage stage">';
+  $block = module_invoke('gazprom_world_map', 'block_view', 'main');
+  $output .= render($block); 
+  $output .= '</div>';
+
+  return $output;
+}
+
+/**
+ * Simple theme override function the the gazprom/gazprom_world_map path
+ */
+function gazprom_world_map_test_theme() {
+  return 'rubik';
+}
+/**
+ * Simple theme override function the the gazprom/gazprom_world_map path
+ */
+function gazprom_world_map_iframe_theme() {
+  return 'gazprom_iframe_stage';
+}
+
+/**
+ * Implements hook_block_info().
+ *
+ * This hook declares what blocks are provided by the module.
+ */
+function gazprom_world_map_block_info() {
+  // This hook returns an array, each component of which is an array of block
+  // information. The array keys are the 'delta' values used in other block
+  // hooks.
+
+  // The required block information is a block description, which is shown
+  // to the site administrator in the list of possible blocks. You can also
+  // provide initial settings for block weight, status, etc.
+
+  // Many options are defined in hook_block_info():
+  $blocks['main'] = array(
+    // info: The name of the block.
+    'info' => t('Main embed block for the Gazprom World Map'),
+    // Block caching options (per role, per user, etc.)
+    'cache' => DRUPAL_CACHE_PER_ROLE, // default
+  );
+
+  return $blocks;
+}
+
+
+/**
+ * Implements hook_block_view().
+ *
+ * This hook generates the contents of the blocks themselves.
+ */
+function gazprom_world_map_block_view($delta = '') {
+  //The $delta parameter tells us which block is being requested.
+  switch ($delta) {
+    case 'main':
+
+      drupal_add_css(drupal_get_path('module', 'gazprom_world_map') . '/gazprom_world_map.css',
+        array()
+      );
+
+      drupal_add_js(drupal_get_path('module', 'gazprom_world_map') . '/gazprom_world_map.js',
+        array('type' => 'file', 'scope' => 'header', 'preprocess' => false)
+      );
+      
+      $block['content'] = gazprom_world_map_contents($delta);
+      break;
+  }
+  return $block;
+}
+
+function gazprom_world_map_theme($existing, $type, $theme, $path){
+  return array(
+    'gazprom_world_map_embed' => array(
+      'variables' => array('content' => null),
+      'template' => 'world-map-embed', // place you file in 'theme' folder of you module folder
+      'path' => drupal_get_path('module', 'gazprom_world_map') .'/theme'
+    )
+  );
+}
+
+/**
+ * A module-defined block content function.
+ */
+function gazprom_world_map_contents($which_block) {
+  switch ($which_block) {
+    case 'main':
+      // Modules would typically perform some database queries to fetch the
+      // content for their blocks. Here, we'll just use the variable set in the
+      // block configuration or, if none has set, a default value.
+      // Block content can be returned in two formats: renderable arrays
+      // (as here) are preferred though a simple string will work as well.
+      //return array('#markup' => variable_get('gazprom_world_map_string',  t('A default value. This block was created at %time', array('%time' => date('c')))));
+      
+      //$output = theme('gazprom_world_map_embed', array('content' => null));
+      
+      $block = module_invoke('views', 'block_view', 'world_map_2-block_1');
+      $output = render($block); 
+
+      return array('#markup' => $output);
+      
+  }
+}
+
+
+/**
+ * Implements hook_ctools_plugin_directory().
+ */
+function gazprom_world_map_ctools_plugin_directory($module, $plugin) {
+//  if ($plugin == 'content_types' && !empty($plugin)) {
+//    return 'includes/' . $plugin;
+//  }
+  if ($module == 'openlayers' && !empty($plugin)) {
+    return 'openlayers_plugins/' . $plugin;
+  }
+}
+
+/**
+ * Implementation of hook_openlayers_behaviors().
+ *
+ * This is a ctools plugins hook.
+ */
+function gazprom_world_map_openlayers_behaviors() {
+  return array(
+    'gazprom_openlayers_behavior_tooltip' => array(
+      'title' => t('Gazprom: Tooltip'),
+      'description' => t('A specially made version of tooltip popup for the Gazprom International site.'),
+      'behavior' => array(
+        'path' => drupal_get_path('module', 'gazprom_world_map') .'/openlayers_plugins',
+        'file' => 'gazprom_openlayers_behavior_tooltip.inc',
+        'class' => 'gazprom_openlayers_behavior_tooltip',
+        'parent' => 'openlayers_behavior',
+      ),
+    ),
+//    'openlayers_behavior_popup_test' => array(
+//      'title' => t('Gazprom: Popup Test'),
+//      'description' => t('Testing (from module)'),
+//      'behavior' => array(
+//        'path' => drupal_get_path('module', 'gazprom_world_map') .'/openlayers_plugins',
+//        'file' => 'openlayers_behavior_popup.inc',
+//        'class' => 'openlayers_behavior_popup_test',
+//        'parent' => 'openlayers_behavior',
+//      ),
+//    ),
+  );
+}

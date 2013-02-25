@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Gazprom History feature.
+ */
+
+include_once('gazprom_history.features.inc');

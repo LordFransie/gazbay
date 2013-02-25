@@ -1,0 +1,8 @@
+name = Gazprom Flash Microsite Block
+package = Gazprom
+description = Provides a block, to be embedded, which contains the Flash assets.
+core = 7.x
+
+version = "7.x-1.x-dev"
+core = "7.x"
+

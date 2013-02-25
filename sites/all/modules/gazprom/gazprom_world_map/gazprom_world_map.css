@@ -1,0 +1,7 @@
+/* @override 
+	http://dev.gazprom/sites/all/modules/gazprom/gazprom_world_map/gazprom_world_map.css?m928fs */
+
+/* Hack to hide Google v3 API inserted copyright info */
+.olLayerGooglePoweredBy {
+	display: none !important;
+}
