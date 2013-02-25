@@ -35,3 +35,6 @@ xmlrpc.php
 /profiles
 /scripts
 /themes
+
+#Gazprom files to avoid
+sites/all/modules/gazprom/microsite
