@@ -1,0 +1,81 @@
+From 88fdfc331eb0df316f84470ec35106c58ef36853 Mon Sep 17 00:00:00 2001
+From: jonmcl <jon@system-werks.com>
+Date: Mon, 6 Feb 2012 11:18:34 -0500
+Subject: [PATCH] Patched OpenLayers module to allow for output of Taxonomy
+ Term Data
+
+---
+ .../views/openlayers_views_style_data.inc          |   50 ++++++++++++++++++++
+ 1 files changed, 50 insertions(+), 0 deletions(-)
+
+diff --git a/sites/all/modules/contrib_map_modules/openlayers/modules/openlayers_views/views/openlayers_views_style_data.inc b/sites/all/modules/contrib_map_modules/openlayers/modules/openlayers_views/views/openlayers_views_style_data.inc
+index aaf50c5..5682b12 100644
+--- a/sites/all/modules/contrib_map_modules/openlayers/modules/openlayers_views/views/openlayers_views_style_data.inc
++++ b/sites/all/modules/contrib_map_modules/openlayers/modules/openlayers_views/views/openlayers_views_style_data.inc
+@@ -225,6 +225,49 @@ class openlayers_views_style_data extends views_plugin_style {
+         ),
+       );
+     }
++    // Taxonomy Term, render with a view
++    if ($this->view->base_table == 'taxonomy_term_data') {
++      $form['data_source']['description_field'] = array(
++          '#type' => 'select',
++          '#title' => t('TaxDescription Content'),
++          '#description' => t('TaxChoose the field or rendering method which will
++            appear as a description on tooltips or popups.'),
++          '#required' => FALSE,
++          '#options' => array_merge(array(
++            '' => '',
++            '#row' => '<' . t('entire row') . '>',
++            '#term' => '<' . t('entire term') . '>'
++          ), $fields),
++          '#default_value' => $this->options['data_source']['description_field'],
++      );
++
++      // Available_view_modes is the array to contain the avaible
++      // view modes, for now this is not content type aware, but should be
++      $available_view_modes = array();
++      $entity_info = entity_get_info();
++      // Get the machine names of the view modes
++      $view_modes_machine_names[] = array_keys($entity_info['taxonomy_term']['view modes']);
++      // Get the labels (human readable) of the view modes
++      foreach ($entity_info['taxonomy_term']['view modes'] as $key => $view_mode) {
++        $view_modes_labels[] = $view_mode[label];
++      }
++      // Combine the machine view mode name with the label, this could sure be done much better?
++      $entities_to_display = array_combine($view_modes_machine_names[0], $view_modes_labels);
++      //output the form
++      $form['data_source']['view_mode'] = array(
++        '#type' => 'select',
++        '#title' => t('View mode'),
++        '#description' => t('View modes are ways of displaying taxonomy term pages.'),
++        '#options' => $entities_to_display,
++        '#default_value' => !empty($this->options['data_source']['view_mode']) ?
++          $this->options['data_source']['view_mode'] : 'full',
++        '#states' => array(
++          'visible' => array(
++            ':input[name="style_options[data_source][description_field]"]' => array('value' => '#term'),
++          ),
++        ),
++      );
++    }
+ 
+     // A simple way to display attributes and styling
+     $form['attributes'] = array(
+@@ -306,6 +349,13 @@ class openlayers_views_style_data extends views_plugin_style {
+           $attributes['#node_rendered'] = drupal_render(node_view(node_load($record->nid), $view_mode));
+         }
+ 
++        // Handle rendering of a taxonomy term view.
++        if ($this->options['data_source']['description_field'] === '#term' &&
++          is_object($record) && isset($record->tid)) {
++          $view_mode = $this->options['data_source']['view_mode'] ? $this->options['data_source']['view_mode'] : 'full';
++          $attributes['#term_rendered'] = drupal_render(taxonomy_term_view(taxonomy_term_load($record->tid), $view_mode));
++        }
++
+         // Create features array.
+         $feature = array(
+           'projection' => '4326',
+-- 
+1.7.8.4
+

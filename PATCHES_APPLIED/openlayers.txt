@@ -1,0 +1,1 @@
+Edited openlayers to support taxonomy entity type

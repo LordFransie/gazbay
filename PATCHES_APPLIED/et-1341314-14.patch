@@ -1,0 +1,51 @@
+diff --git a/entity_translation.module b/entity_translation.module
+index 467c110..e5b5033 100644
+--- a/entity_translation.module
++++ b/entity_translation.module
+@@ -77,18 +77,6 @@ function entity_translation_entity_info_alter(&$entity_info) {
+       // If no base path is provided we default to the common "node/%node"
+       // pattern.
+       if (!isset($entity_info[$entity_type]['translation']['entity_translation']['base path'])) {
+-        // Give a hint we are not done yet with entity translation information
+-        // building, since if caches have been cleared also menu cache is going
+-        // to be rebuilt and would retrieve an incomplete entity information.
+-        $GLOBALS['entity_translation_info_building'] = TRUE;
+-        $router = menu_get_router();
+-        unset($GLOBALS['entity_translation_info_building']);
+-
+-        // If we cannot find a usable base path we skip to the next entity type.
+-        if (!isset($router["$entity_type/%"])) {
+-          continue;
+-        }
+-
+         $path = "$entity_type/%$entity_type";
+         $entity_info[$entity_type]['translation']['entity_translation']['base path'] = $path;
+       }
+@@ -147,12 +135,6 @@ function entity_translation_menu() {
+ function entity_translation_menu_alter(&$items) {
+   $backup = array();
+ 
+-  // If entity translation information is being rebuilt we must not proceed to
+-  // avoid recursion.
+-  if (!empty($GLOBALS['entity_translation_info_building'])) {
+-    return;
+-  }
+-
+   // Create tabs for all possible entity types.
+   foreach (entity_get_info() as $entity_type => $info) {
+     // Menu is rebuilt while determining entity translation base paths and
+@@ -160,6 +142,14 @@ function entity_translation_menu_alter(&$items) {
+     if (entity_translation_enabled($entity_type)) {
+       // Extract informations from the bundle description.
+       $path = $info['translation']['entity_translation']['base path'];
++
++      // If the base path is not defined we cannot provide the translation UI
++      // for this entity type.
++      if (!isset($items[$path])) {
++        drupal_set_message(t('The entities of type %entity_type do not define a valid base path: it will not be possible to translate them.', array('%entity_type' => $info['label'])), 'warning');
++        continue;
++      }
++
+       $keys = array('theme callback', 'theme arguments', 'access callback', 'access arguments', 'load arguments');
+       $item = array_intersect_key($info['translation']['entity_translation'], drupal_map_assoc($keys));
+ 

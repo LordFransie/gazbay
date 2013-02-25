@@ -1,0 +1,13 @@
+diff --git a/title.module b/title.module
+index aa22e7d..79f6b02 100644
+--- a/title.module
++++ b/title.module
+@@ -486,7 +486,7 @@ function title_field_attach_submit($entity_type, $entity, $form, &$form_state) {
+   $fr_info = title_field_replacement_info($entity_type);
+ 
+   if (!empty($fr_info)) {
+-    $values = &$form_state['values'];
++    $values = $form_state['values'];
+     $values = drupal_array_get_nested_value($values, $form['#parents']);
+     $fr_info = title_field_replacement_info($entity_type);
+ 

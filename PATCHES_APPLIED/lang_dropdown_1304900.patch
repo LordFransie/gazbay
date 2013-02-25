@@ -1,0 +1,52 @@
+diff --git a/lang_dropdown.module b/lang_dropdown.module
+index 6afedad..93a9524 100755
+--- a/lang_dropdown.module
++++ b/lang_dropdown.module
+@@ -144,6 +144,7 @@ function lang_dropdown_form($form, &$form_state, $languages) {
+   $settings = _lang_dropdown_get_settings();
+   $module_path = drupal_get_path('module', 'lang_dropdown');
+   $options = $js_settings = array();
++  $selected_option = $language_url->language;
+ 
+   // We will use the below $enabled_languages to set the language for each link.
+   $enabled_languages = language_list('enabled');
+@@ -157,16 +158,10 @@ function lang_dropdown_form($form, &$form_state, $languages) {
+     // Build the options in an assosiative array, so it will be ready for #options in select form element.
+     $options += array($lang_code => $lang_options['title']);
+ 
+-    // Set the selected option to be ready for #default_value in select form element.
+-    if (isset($lang_options['href']) && ($lang_options['href'] == $_GET['q'] || ($lang_options['href'] == '<front>' && drupal_is_front_page()))
+-        && (empty($lang_options['language']) || $lang_options['language']->language == $language_url->language)) {
+-      $selected_option = $lang_code;
+-    }
+-
+     // Now we build our hidden form inputs to handle the redirections.
+     $hidden_elements[$lang_code] = array(
+       '#type' => 'hidden',
+-      '#default_value' => url($lang_options['href'], $lang_options),
++      '#default_value' => url(isset($lang_options['href']) ? $lang_options['href'] : lang_dropdown_get_existing_translation_href($languages->links), $lang_options),
+     );
+ 
+     // Handle flags with Language icons module using JS widget.
+@@ -245,3 +240,21 @@ function _lang_dropdown_get_settings($settings = NULL) {
+   );
+   return variable_get('lang_dropdown', $settings);
+ }
++
++/**
++ * Function to get link to a default or existing translation when no translation found.
++ */
++function lang_dropdown_get_existing_translation_href($links) {
++  //try to get default translation
++  if (isset($links[language_default('language')]['href'])) {
++    return $links[language_default('language')]['href'];
++  } else {
++    //try to find existing translation
++    foreach ($links as $lang_options) {
++        if (isset($lang_options['href'])) {
++            return $lang_options['href'];
++        }
++    }
++  }
++  return '<front>';
++}

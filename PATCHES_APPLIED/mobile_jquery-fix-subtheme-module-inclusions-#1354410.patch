@@ -1,0 +1,15 @@
+diff --git a/sites/all/themes/mobile_jquery/template.php b/sites/all/themes/mobile_jquery/template.php
+index 57a0f7f..2dab7cd 100644
+--- a/sites/all/themes/mobile_jquery/template.php
++++ b/sites/all/themes/mobile_jquery/template.php
+@@ -10,8 +10,8 @@ include_once(dirname(__FILE__) . '/includes/modules/form.inc');
+ $modules = module_list();
+ 
+ foreach ($modules as $module) {
+-  if (is_file(drupal_get_path('theme', $theme_key) . '/includes/modules/' . str_replace('_', '-', $module) . '.inc')) {
+-    include_once(drupal_get_path('theme', $theme_key) . '/includes/modules/' . str_replace('_', '-', $module) . '.inc');
++  if (is_file(drupal_get_path('theme', 'mobile_jquery') . '/includes/modules/' . str_replace('_', '-', $module) . '.inc')) {
++    include_once(drupal_get_path('theme', 'mobile_jquery') . '/includes/modules/' . str_replace('_', '-', $module) . '.inc');
+   }    
+ } 
+ 
